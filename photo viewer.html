@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Photo Viewer</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      background-color: #f0f0f0;
+      padding: 20px;
+    }
+    #imageDisplay {
+      max-width: 90%;
+      max-height: 80vh;
+      margin-top: 20px;
+      transition: transform 0.2s ease;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    input[type="file"] {
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📷 Simple Photo Viewer</h1>
+
+  <input type="file" id="fileInput" accept="image/*" multiple><br>
+
+  <button onclick="prevImage()">⬅️ පසුපස</button>
+  <button onclick="nextImage()">ඊළඟ ➡️</button><br>
+  <button onclick="zoomIn()">🔍 Zoom +</button>
+  <button onclick="zoomOut()">🔎 Zoom -</button>
+
+  <br>
+  <img id="imageDisplay" src="" alt="Selected Image">
+  <p id="filename"></p>
+
+  <script>
+    let images = [];
+    let currentIndex = 0;
+    let zoomLevel = 1;
+
+    const imgElement = document.getElementById('imageDisplay');
+    const fileName = document.getElementById('filename');
+
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+      images = Array.from(event.target.files);
+      if (images.length > 0) {
+        currentIndex = 0;
+        zoomLevel = 1;
+        displayImage();
+      }
+    });
+
+    function displayImage() {
+      const file = images[currentIndex];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        imgElement.src = e.target.result;
+        imgElement.style.transform = `scale(${zoomLevel})`;
+        fileName.innerText = file.name;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function nextImage() {
+      if (images.length > 0 && currentIndex < images.length - 1) {
+        currentIndex++;
+        zoomLevel = 1;
+        displayImage();
+      }
+    }
+
+    function prevImage() {
+      if (images.length > 0 && currentIndex > 0) {
+        currentIndex--;
+        zoomLevel = 1;
+        displayImage();
+      }
+    }
+
+    function zoomIn() {
+      zoomLevel += 0.1;
+      imgElement.style.transform = `scale(${zoomLevel})`;
+    }
+
+    function zoomOut() {
+      zoomLevel = Math.max(0.1, zoomLevel - 0.1);
+      imgElement.style.transform = `scale(${zoomLevel})`;
+    }
+  </script>
+
+</body>
+</html>
